@@ -49,9 +49,10 @@ nyc_crime_map <- leaflet() %>%
   addProviderTiles("CartoDB.Positron") 
 
 # mark user input on the map
-nyc_crime_map <- nyc_crime_map %>%
-  addAwesomeMarkers(lng = addr_lon, lat = addr_lat, icon = home_icon, group = 'home')
-
+if (is.numeric(addr_lon) & is.numeric(addr_lat)){
+  nyc_crime_map <- nyc_crime_map %>%
+    addAwesomeMarkers(lng = addr_lon, lat = addr_lat, icon = home_icon, group = 'Home')
+}
 # Add heat map of crimes to the map
 nyc_crime_map <- nyc_crime_map %>%
   addCircleMarkers(data = nyc_shooting,  radius = 0.5, color = 'black', group = 'Shootings') %>%
@@ -63,6 +64,18 @@ nyc_crime_map <- nyc_crime_map %>%
 zipcode <- st_read('ZIP_CODE/ZIP_CODE_040114.shp')
 shapeData <- st_transform(zipcode, CRS('+proj=longlat +datum=WGS84'))
 
+# get zipcode from address given by the user
+addr_st <- st_point(c(addr_lon, addr_lat))
+idx <- as.integer(st_intersects(addr_st, shapeData$geometry))
+addr_zip <- shapeData$ZIPCODE[idx]
+addr_zip_sf <- shapeData$geometry[idx]
+
+# Mark selected zip with bold line
+nyc_crime_map <- nyc_crime_map %>%
+  addPolygons(data=addr_zip_sf,weight=3,col = 'orange', fillOpacity = 0,
+              group = "Home"
+  )
+
 # Mark area by zipcode and add layers control
 nyc_crime_map <- nyc_crime_map %>%
   addPolygons(data=shapeData$geometry,weight=1,col = 'grey', fillOpacity = 0,
@@ -73,7 +86,7 @@ nyc_crime_map <- nyc_crime_map %>%
               popup = shapeData$ZIPCODE,
               group = "Area by zipcode"
   )%>%
-  addLayersControl(overlayGroups = c("Violations", "Misdemeanors", "Felonies", "Shootings", "Area by zipcode"))
+  addLayersControl(overlayGroups = c("Violations", "Misdemeanors", "Felonies", "Shootings", "Area by zipcode", "Home"))
 
 nyc_crime_map
 
@@ -167,11 +180,11 @@ names(zip_df) <- "ZIPCODE"
 # write.csv(violation_zip_count, "violation_zip_count.csv", row.names = F)
 # write.csv(shooting_zip_count, "shooting_zip_count.csv", row.names = F)
 
-felony_zip_count = read.csv(file = "felony_zip_count.csv", header = TRUE, sep = ",")
-misdemeanor_zip_count = read.csv(file = "misdemeanor_zip_count.csv", header = TRUE, sep = ",")
-violation_zip_count = read.csv(file = "violation_zip_count.csv", header = TRUE, sep = ",")
-shooting_zip_count = read.csv(file = "shooting_zip_count.csv", header = TRUE, sep = ",")
-all_crimes_zip_count = data.frame(ZIPCODE = zip_df, n = felony_zip_count$n + misdemeanor_zip_count$n + violation_zip_count$n)
+felony_zip_count <- read.csv(file = "felony_zip_count.csv", header = TRUE, sep = ",")
+misdemeanor_zip_count <- read.csv(file = "misdemeanor_zip_count.csv", header = TRUE, sep = ",")
+violation_zip_count <- read.csv(file = "violation_zip_count.csv", header = TRUE, sep = ",")
+shooting_zip_count <- read.csv(file = "shooting_zip_count.csv", header = TRUE, sep = ",")
+all_crimes_zip_count <- data.frame(ZIPCODE = zip_df, n = felony_zip_count$n + misdemeanor_zip_count$n + violation_zip_count$n)
 
 # longitude and latitude to zip
 nyc_summary_map <- leaflet() %>%
@@ -180,8 +193,8 @@ nyc_summary_map <- leaflet() %>%
   setView(-73.9, 40.73, zoom = 10) %>%
   addProviderTiles("CartoDB.Positron")
 
+# Add borderlines for each zipcode area
 nyc_summary_map <- nyc_summary_map %>%
-  addAwesomeMarkers(lng = addr_lon, lat = addr_lat, icon = home_icon, group = 'home') %>%
   addPolygons(data=shapeData$geometry,weight=1,col = 'grey', fillOpacity = 0,
               highlightOptions = highlightOptions(
                 weight = 2,
@@ -190,12 +203,16 @@ nyc_summary_map <- nyc_summary_map %>%
               popup = shapeData$ZIPCODE
               )
 
+# Mark user input address
+nyc_summary_map <- nyc_summary_map %>%
+  addAwesomeMarkers(lng = addr_lon, lat = addr_lat, icon = home_icon)
+
+# Mark selected zip with bold line
+nyc_summary_map <- nyc_summary_map %>%
+  addPolygons(data=addr_zip_sf,weight=3,col = 'orange', fillOpacity = 0)
+
 nyc_summary_map
 
-# get zipcode from address given by the user
-addr_st <- st_point(c(addr_lon, addr_lat))
-idx <- as.integer(st_intersects(addr_st, shapeData$geometry))
-addr_zip = shapeData$ZIPCODE[idx]
 
 # given address is top n% in number of felonies reported
 felony_perc <- as.integer(rownames(felony_zip_count)[felony_zip_count$ZIPCODE == addr_zip]) / nrow(zip_df) * 100
@@ -232,6 +249,11 @@ if (length(all_crimes_perc) == 0) {
 }
 all_crimes_perc
 
+# summary table for crimes
+crime_summary <- data.frame(all_crimes_perc = all_crimes_perc, shooting_perc = shooting_perc, felony_perc = felony_perc, misdemeanor_perc = misdemeanor_perc, violation_perc = violation_perc)
+crime_summary
+env_summary
+
 # # number of crimes by category in the selected region --> maybe these would be better for the crime map instead of the summary map
 # shooting_zip_count[shooting_zip_count$ZIPCODE == addr_zip, "n"]
 # felony_zip_count[felony_zip_count$ZIPCODE == addr_zip, "n"]
@@ -245,14 +267,13 @@ all_crimes_perc
 # summary(shooting_zip_count$n)
 # summary(all_crimes_zip_count$n)
 
-# par(mfrow=c(3,1))
+par(mfrow=c(3,1))
 
 
 # boxplot for all crimes
 boxplot(all_crimes_zip_count$n,
         main = "All Crimes",
         staplewex = 1,
-        xlab = "counts",
         col = "lavender",
         border = "darkblue",
         horizontal = TRUE
@@ -266,9 +287,7 @@ text(x=boxplot.stats(all_crimes_zip_count$n)$stats[seq(2,5,2)], labels = boxplot
 # boxplot for shooting incidents
 boxplot(shooting_zip_count$n,
         main = "Shooting Incidents",
-        xlab = "counts",
         staplewex = 1,
-        xlab = "counts",
         col = "lavender",
         border = "darkblue",
         horizontal = TRUE
@@ -282,9 +301,7 @@ text(x=boxplot.stats(shooting_zip_count$n)$stats[seq(2,5,2)], labels = boxplot.s
 # boxplot for felonies
 boxplot(felony_zip_count$n,
         main = "Felonies",
-        xlab = "counts",
         staplewex = 1,
-        xlab = "counts",
         col = "lavender",
         border = "darkblue",
         horizontal = TRUE
@@ -299,9 +316,6 @@ text(x=boxplot.stats(felony_zip_count$n)$stats[seq(2,5,2)], labels = boxplot.sta
 boxplot(misdemeanor_zip_count$n,
         main = "Misdemeanors",
         staplewex = 1,
-        xlab = "counts",
-        staplewex = 1,
-        xlab = "counts",
         col = "lavender",
         border = "darkblue",
         horizontal = TRUE
@@ -316,9 +330,6 @@ text(x=boxplot.stats(misdemeanor_zip_count$n)$stats[seq(2,5,2)], labels = boxplo
 boxplot(violation_zip_count$n,
         main = "Violations",
         staplewex = 1,
-        xlab = "counts",
-        staplewex = 1,
-        xlab = "counts",
         col = "lavender",
         border = "darkblue",
         horizontal = TRUE
@@ -328,5 +339,150 @@ points(x = violation_zip_count[violation_zip_count$ZIPCODE == addr_zip,"n"],y = 
 text(x=violation_zip_count[violation_zip_count$ZIPCODE == addr_zip,"n"], labels = violation_zip_count[violation_zip_count$ZIPCODE == addr_zip,"n"], y = 1.05, cex = 0.7)
 text(x=boxplot.stats(violation_zip_count$n)$stats[seq(1,5,2)], labels = boxplot.stats(violation_zip_count$n)$stats[seq(1,5,2)], y = 1.25, cex = 0.7)
 text(x=boxplot.stats(violation_zip_count$n)$stats[seq(2,5,2)], labels = boxplot.stats(violation_zip_count$n)$stats[seq(2,5,2)], y = 0.75, cex = 0.7)
+
+graphics.off()
+
+air <- read.csv('air.csv')[,c(2:3)]
+haz <- read.csv('hazadous.csv')[,c(2:3)]
+noise <- read.csv('noise.csv')[,c(2:3)]
+rodent <- read.csv('rodent_ars_zip.csv')[,c(2:3)]
+
+head(haz)
+head(noise)
+head(rodent)
+
+air <- join(zip_df, air)
+air[is.na(air$air),"air"] <- 0
+air <- air[order(-air$air),]
+rownames(air) <- NULL
+
+haz <- join(zip_df, haz)
+haz[is.na(haz$hazadous),"hazadous"] <- 0
+haz <- haz[order(-haz$hazadous),]
+rownames(haz) <- NULL
+
+noise <- join(zip_df, noise)
+noise[is.na(noise$noise),"noise"] <- 0
+noise <- noise[order(-noise$noise),]
+rownames(noise) <- NULL
+
+rodent <- join(zip_df, rodent)
+rodent[is.na(rodent$rat),"rat"] <- 0
+rodent <- rodent[order(-rodent$rat),]
+rownames(rodent) <- NULL
+
+all_env <- data.frame(ZIPCODE = zip_df, n = air$air + haz$hazadous + noise$noise + rodent$rat)
+
+# given address is top n% in number of all environmental pollutions reported
+all_env_perc <- as.integer(rownames(all_env)[all_env$ZIPCODE == addr_zip]) / nrow(zip_df) * 100
+if (length(all_env_perc) == 0) {
+  all_env_perc = 100
+}
+all_env_perc
+
+# given address is top n% in number of air pollutions reported
+air_perc <- as.integer(rownames(air)[air$ZIPCODE == addr_zip]) / nrow(zip_df) * 100
+if (length(air_perc) == 0) {
+  air_perc = 100
+}
+air_perc
+
+# given address is top n% in number of hazardous materials reported
+haz_perc <- as.integer(rownames(haz)[haz$ZIPCODE == addr_zip]) / nrow(zip_df) * 100
+if (length(haz_perc) == 0) {
+  haz_perc = 100
+}
+haz_perc
+
+# given address is top n% in number of noise pollutions reported
+noise_perc <- as.integer(rownames(noise)[noise$ZIPCODE == addr_zip]) / nrow(zip_df) * 100
+if (length(noise_perc) == 0) {
+  noise_perc = 100
+}
+noise_perc
+
+# given address is top n% in number of active rat signs reported
+rodent_perc <- as.integer(rownames(rodent)[rodent$ZIPCODE == addr_zip]) / nrow(zip_df) * 100
+if (length(rodent_perc) == 0) {
+  rodent_perc = 100
+}
+rodent_perc
+
+# Summary table for environmental factors
+env_summary <- data.frame(all_env_perc = all_env_perc, air_perc = air_perc, haz_perc = haz_perc, noise_perc = noise_perc, rodent_perc = rodent_perc)
+env_summary
+
+# par(mfrow=c(3,1))
+
+# boxplot for all environmental pollutions
+boxplot(all_env$n,
+        main = "All Environmental Factors",
+        staplewex = 1,
+        col = "lavender",
+        border = "darkblue",
+        horizontal = TRUE
+)
+points(x = all_env[all_env$ZIPCODE == addr_zip,"n"],y = 1, pch = 19, cex = 1.15,
+       col = "red")
+text(x=all_env[all_env$ZIPCODE == addr_zip,"n"], labels = all_env[all_env$ZIPCODE == addr_zip,"n"], y = 1.05, cex = 0.7)
+text(x=boxplot.stats(all_env$n)$stats[seq(1,5,2)], labels = boxplot.stats(all_env$n)$stats[seq(1,5,2)], y = 1.25, cex = 0.7)
+text(x=boxplot.stats(all_env$n)$stats[seq(2,5,2)], labels = boxplot.stats(all_env$n)$stats[seq(2,5,2)], y = 0.75, cex = 0.7)
+
+# boxplot for all environmental pollutions
+boxplot(air$air,
+        main = "Air Pollution",
+        staplewex = 1,
+        col = "lavender",
+        border = "darkblue",
+        horizontal = TRUE
+)
+points(x = air[air$ZIPCODE == addr_zip,"air"],y = 1, pch = 19, cex = 1.15,
+       col = "red")
+text(x=air[air$ZIPCODE == addr_zip,"air"], labels = air[air$ZIPCODE == addr_zip,"air"], y = 1.05, cex = 0.7)
+text(x=boxplot.stats(air$air)$stats[seq(1,5,2)], labels = boxplot.stats(air$air)$stats[seq(1,5,2)], y = 1.25, cex = 0.7)
+text(x=boxplot.stats(air$air)$stats[seq(2,5,2)], labels = boxplot.stats(air$air)$stats[seq(2,5,2)], y = 0.75, cex = 0.7)
+
+# boxplot for hazardous materials
+boxplot(haz$hazadous,
+        main = "Hazardous Material",
+        staplewex = 1,
+        col = "lavender",
+        border = "darkblue",
+        horizontal = TRUE
+)
+points(x = haz[haz$ZIPCODE == addr_zip,"hazadous"],y = 1, pch = 19, cex = 1.15,
+       col = "red")
+text(x=haz[haz$ZIPCODE == addr_zip,"hazadous"], labels = haz[haz$ZIPCODE == addr_zip,"hazadous"], y = 1.05, cex = 0.7)
+text(x=boxplot.stats(haz$hazadous)$stats[seq(1,5,2)], labels = boxplot.stats(haz$hazadous)$stats[seq(1,5,2)], y = 1.25, cex = 0.7)
+text(x=boxplot.stats(haz$hazadous)$stats[seq(2,5,2)], labels = boxplot.stats(haz$hazadous)$stats[seq(2,5,2)], y = 0.75, cex = 0.7)
+
+# boxplot for noise pollutions
+boxplot(noise$noise,
+        main = "Noise Pollution",
+        staplewex = 1,
+        col = "lavender",
+        border = "darkblue",
+        horizontal = TRUE
+)
+points(x = noise[noise$ZIPCODE == addr_zip,"noise"],y = 1, pch = 19, cex = 1.15,
+       col = "red")
+text(x=noise[noise$ZIPCODE == addr_zip,"noise"], labels = noise[noise$ZIPCODE == addr_zip,"noise"], y = 1.05, cex = 0.7)
+text(x=boxplot.stats(noise$noise)$stats[seq(1,5,2)], labels = boxplot.stats(noise$noise)$stats[seq(1,5,2)], y = 1.25, cex = 0.7)
+text(x=boxplot.stats(noise$noise)$stats[seq(2,5,2)], labels = boxplot.stats(noise$noise)$stats[seq(2,5,2)], y = 0.75, cex = 0.7)
+
+# boxplot for active rat signs
+boxplot(rodent$rat,
+        main = "Hazardous Material",
+        staplewex = 1,
+        col = "lavender",
+        border = "darkblue",
+        horizontal = TRUE
+)
+points(x = rodent[rodent$ZIPCODE == addr_zip,"rat"],y = 1, pch = 19, cex = 1.15,
+       col = "red")
+text(x=rodent[rodent$ZIPCODE == addr_zip,"rat"], labels = rodent[rodent$ZIPCODE == addr_zip,"rat"], y = 1.05, cex = 0.7)
+text(x=boxplot.stats(rodent$rat)$stats[seq(1,5,2)], labels = boxplot.stats(rodent$rat)$stats[seq(1,5,2)], y = 1.25, cex = 0.7)
+text(x=boxplot.stats(rodent$rat)$stats[seq(2,5,2)], labels = boxplot.stats(rodent$rat)$stats[seq(2,5,2)], y = 0.75, cex = 0.7)
+
 
 graphics.off()
