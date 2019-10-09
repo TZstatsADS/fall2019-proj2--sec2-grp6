@@ -18,10 +18,6 @@ library(sf)
 library(RDSTK)
 library(leaflet.extras)
 
-# import cleaned crime data
-nyc_crime <- read.csv(file = "nyc_crime.csv", header = TRUE, sep = ",")
-tail(nyc_crime)
-
 # import crime data by category
 felony <- read.csv(file = "felony.csv", header = TRUE, sep = ",")
 misdemeanor <- read.csv(file = "misdemeanor.csv", header = TRUE, sep = ",")
@@ -32,7 +28,7 @@ nyc_shooting <- read.csv(file="nyc_shooting.csv", header=TRUE, sep=",")
 nyc_shooting
 
 # get user input for the desired address
-addr <- readline(prompt = "Enter address (e.g. 2990 Broadway, New York, NY): ")
+addr <- readline(prompt = "Enter address (e.g. 2990 Broadway, New York, New York): ")
 
 # generate home icon for to mark the user input
 home_icon<- awesomeIcons(
@@ -44,8 +40,6 @@ home_icon<- awesomeIcons(
 # get longitude and latitude for the user input
 addr_lon <- street2coordinates(addr)$longitude
 addr_lat <- street2coordinates(addr)$latitude
-
-street2coordinates(addr)
 
 # create nyc_crime_map
 nyc_crime_map <- leaflet() %>%
@@ -67,85 +61,106 @@ nyc_crime_map <- nyc_crime_map %>%
 
 # import shapefile for city council districts
 zipcode <- st_read('ZIP_CODE/ZIP_CODE_040114.shp')
-shapeData1 <- st_transform(zipcode, CRS('+proj=longlat +datum=WGS84'))
+shapeData <- st_transform(zipcode, CRS('+proj=longlat +datum=WGS84'))
 
 # Mark area by zipcode and add layers control
 nyc_crime_map <- nyc_crime_map %>%
-  addPolygons(data=shapeData1$geometry,weight=1,col = 'grey', fillOpacity = 0,
+  addPolygons(data=shapeData$geometry,weight=1,col = 'grey', fillOpacity = 0,
               highlightOptions = highlightOptions(
                 weight = 2,
                 color = 'black', fillOpacity = 0,
                 bringToFront = TRUE, sendToBack = TRUE),
-              popup = shapeData1$ZIPCODE,
+              popup = shapeData$ZIPCODE,
               group = "Area by zipcode"
-  )
-
+  )%>%
   addLayersControl(overlayGroups = c("Violations", "Misdemeanors", "Felonies", "Shootings", "Area by zipcode"))
 
 nyc_crime_map
 
+
+zip_df <- data.frame(shapeData$ZIPCODE)
+names(zip_df) <- "ZIPCODE"
+
 # # count number of crimes by zipcode
-# shapeData2 <- zipcode %>%
-#   st_transform(2263)   # convert to same projection as below
-# 
 # felony_sf <- felony %>%
-#   mutate_at(c("X_COORD_CD", "Y_COORD_CD"), as.numeric) %>%   # coordinates must be numeric
+#   mutate_at(c("Longitude","Latitude"), as.numeric) %>%   # coordinates must be numeric
 #   st_as_sf(
-#     coords = c("X_COORD_CD", "Y_COORD_CD"),
+#     coords = c("Longitude","Latitude"),
 #     agr = "constant",
-#     crs = 2263,        # nad83 / new york long island projection
+#     crs = CRS('+proj=longlat +datum=WGS84'),        # nad83 / new york long island projection
 #     stringsAsFactors = FALSE,
 #     remove = TRUE
 #   )
 # 
-# felony_in_zip <- st_join(felony_sf,shapeData2)
-# felony_zip_count <- count(as_tibble(felony_in_zip), "ZIPCODE")
+# felony_in_zip <- st_join(felony_sf,shapeData, join = st_within)
+# felony_zip_count <- count(as_tibble(felony_in_zip), ZIPCODE)
 # 
-# felony_in_zip
+# felony_zip_count <- join(zip_df, data.frame(felony_zip_count))
+# felony_zip_count[is.na(felony_zip_count$n),"n"] <- 0
+# felony_zip_count <- felony_zip_count[order(-felony_zip_count$n),]
+# rownames(felony_zip_count) <- NULL
+# felony_zip_count
+# 
 # 
 # misdemeanor_sf <- misdemeanor %>%
-#   mutate_at(c("X_COORD_CD", "Y_COORD_CD"), as.numeric) %>%   # coordinates must be numeric
+#   mutate_at(c("Longitude","Latitude"), as.numeric) %>%   # coordinates must be numeric
 #   st_as_sf(
-#     coords = c("X_COORD_CD", "Y_COORD_CD"),
+#     coords = c("Longitude","Latitude"),
 #     agr = "constant",
-#     crs = 2263,        # nad83 / new york long island projection
+#     crs = CRS('+proj=longlat +datum=WGS84'),        # nad83 / new york long island projection
 #     stringsAsFactors = FALSE,
 #     remove = TRUE
 #   )
 # 
-# misdemeanor_in_zip <- st_join(misdemeanor_sf,shapeData2)
-# misdemeanor_zip_count <- count(as_tibble(misdemeanor_in_zip), "ZIPCODE")
+# misdemeanor_in_zip <- st_join(misdemeanor_sf,shapeData, join = st_within)
+# misdemeanor_zip_count <- count(as_tibble(misdemeanor_in_zip), ZIPCODE)
+# 
+# misdemeanor_zip_count <- join(zip_df, data.frame(misdemeanor_zip_count))
+# misdemeanor_zip_count[is.na(misdemeanor_zip_count$n),"n"] <- 0
+# misdemeanor_zip_count <- misdemeanor_zip_count[order(-misdemeanor_zip_count$n),]
+# 
+# rownames(misdemeanor_zip_count) <- NULL
+# misdemeanor_zip_count
 # 
 # violation_sf <- violation %>%
-#   mutate_at(c("X_COORD_CD", "Y_COORD_CD"), as.numeric) %>%   # coordinates must be numeric
+#   mutate_at(c("Longitude","Latitude"), as.numeric) %>%   # coordinates must be numeric
 #   st_as_sf(
-#     coords = c("X_COORD_CD", "Y_COORD_CD"),
+#     coords = c("Longitude","Latitude"),
 #     agr = "constant",
-#     crs = 2263,        # nad83 / new york long island projection
+#     crs = CRS('+proj=longlat +datum=WGS84'),        # nad83 / new york long island projection
 #     stringsAsFactors = FALSE,
 #     remove = TRUE
 #   )
 # 
-# violation_in_zip <- st_join(violation_sf,shapeData2)
-# violation_zip_count <- count(as_tibble(violation_in_zip), "ZIPCODE")
+# violation_in_zip <- st_join(violation_sf,shapeData, join = st_within)
+# violation_zip_count <- count(as_tibble(violation_in_zip), ZIPCODE)
+# 
+# violation_zip_count <- join(zip_df, data.frame(violation_zip_count))
+# violation_zip_count[is.na(violation_zip_count$n),"n"] <- 0
+# violation_zip_count <- violation_zip_count[order(-violation_zip_count$n),]
+# 
+# rownames(violation_zip_count) <- NULL
+# violation_zip_count
+# 
 # 
 # shooting_sf <- nyc_shooting %>%
-#   mutate_at(c("X_COORD_CD", "Y_COORD_CD"), as.numeric) %>%   # coordinates must be numeric
+#   mutate_at(c("Longitude", "Latitude"), as.numeric) %>%   # coordinates must be numeric
 #   st_as_sf(
-#     coords = c("X_COORD_CD", "Y_COORD_CD"),
+#     coords = c("Longitude", "Latitude"),
 #     agr = "constant",
-#     crs = 2263,        # nad83 / new york long island projection
+#     crs = CRS('+proj=longlat +datum=WGS84'),        # nad83 / new york long island projection
 #     stringsAsFactors = FALSE,
 #     remove = TRUE
 #   )
 # 
-# shooting_in_zip <- st_join(shooting_sf,shapeData2)
-# shooting_zip_count <- count(as_tibble(shooting_in_zip), "ZIPCODE")
+# shooting_in_zip <- st_join(shooting_sf,shapeData, join = st_within)
+# shooting_zip_count <- count(as_tibble(shooting_in_zip), ZIPCODE)
 # 
-# felony_zip_count <- felony_zip_count[complete.cases(felony_zip_count),]
-# misdemeanor_zip_count <- misdemeanor_zip_count[complete.cases(misdemeanor_zip_count),]
-# violation_zip_count <- violation_zip_count[complete.cases(violation_zip_count),]
-# shooting_zip_count <- shooting_zip_count[complete.cases(shooting_zip_count),]
+# shooting_zip_count <- join(zip_df, data.frame(shooting_zip_count))
+# shooting_zip_count[is.na(shooting_zip_count$n),"n"] <- 0
+# shooting_zip_count <- shooting_zip_count[order(-shooting_zip_count$n),]
+# 
+# rownames(shooting_zip_count) <- NULL
 # 
 # write.csv(felony_zip_count, "felony_zip_count.csv", row.names = F)
 # write.csv(misdemeanor_zip_count, "misdemeanor_zip_count.csv", row.names = F)
@@ -156,7 +171,7 @@ felony_zip_count = read.csv(file = "felony_zip_count.csv", header = TRUE, sep = 
 misdemeanor_zip_count = read.csv(file = "misdemeanor_zip_count.csv", header = TRUE, sep = ",")
 violation_zip_count = read.csv(file = "violation_zip_count.csv", header = TRUE, sep = ",")
 shooting_zip_count = read.csv(file = "shooting_zip_count.csv", header = TRUE, sep = ",")
-
+all_crimes_zip_count = data.frame(ZIPCODE = zip_df, n = felony_zip_count$n + misdemeanor_zip_count$n + violation_zip_count$n)
 
 # longitude and latitude to zip
 nyc_summary_map <- leaflet() %>%
@@ -167,73 +182,151 @@ nyc_summary_map <- leaflet() %>%
 
 nyc_summary_map <- nyc_summary_map %>%
   addAwesomeMarkers(lng = addr_lon, lat = addr_lat, icon = home_icon, group = 'home') %>%
-  addPolygons(data=shapeData1$geometry,weight=1,col = 'grey', fillOpacity = 0,
+  addPolygons(data=shapeData$geometry,weight=1,col = 'grey', fillOpacity = 0,
               highlightOptions = highlightOptions(
                 weight = 2,
                 color = 'black', fillOpacity = 0,
                 bringToFront = TRUE, sendToBack = TRUE),
-              popup = shapeData1$ZIPCODE
+              popup = shapeData$ZIPCODE
               )
 
 nyc_summary_map
 
 # get zipcode from address given by the user
 addr_st <- st_point(c(addr_lon, addr_lat))
-idx <- as.integer(st_intersects(addr_st, shapeData1$geometry))
-addr_zip = shapeData1$ZIPCODE[idx]
-
-# sort felony_zip_count in descending order
-felony_zip_count <- felony_zip_count[order(-felony_zip_count$freq),]
-rownames(felony_zip_count) <- NULL # reset row index
-felony_zip_count
+idx <- as.integer(st_intersects(addr_st, shapeData$geometry))
+addr_zip = shapeData$ZIPCODE[idx]
 
 # given address is top n% in number of felonies reported
-felony_perc <- as.integer(rownames(felony_zip_count)[felony_zip_count$ZIPCODE == addr_zip]) / length(shapeData$ZIPCODE) * 100
+felony_perc <- as.integer(rownames(felony_zip_count)[felony_zip_count$ZIPCODE == addr_zip]) / nrow(zip_df) * 100
 if (length(felony_perc) == 0) {
   felony_perc = 100
 }
-
-# sort shooting_zip_count in descending order
-shooting_zip_count <- shooting_zip_count[order(-shooting_zip_count$freq),]
-rownames(shooting_zip_count) <- NULL # reset row index
-shooting_zip_count
+felony_perc
 
 # given address is top n% in number of shooting instances reported
-shooting_perc <- as.integer(rownames(shooting_zip_count)[shooting_zip_count$ZIPCODE == addr_zip]) / length(shapeData$ZIPCODE)
+shooting_perc <- as.integer(rownames(shooting_zip_count)[shooting_zip_count$ZIPCODE == addr_zip]) / nrow(zip_df) * 100
 if (length(shooting_perc) == 0) {
   shooting_perc = 100
 }
-
-# sort misdemeanor_zip_count in descending order
-misdemeanor_zip_count <- misdemeanor_zip_count[order(-misdemeanor_zip_count$freq),]
-rownames(misdemeanor_zip_count) <- NULL # reset row index
-misdemeanor_zip_count
+shooting_perc
 
 # given address is top n% in number of misdemeanors reported
-misdemeanor_perc <- as.integer(rownames(misdemeanor_zip_count)[misdemeanor_zip_count$ZIPCODE == addr_zip]) / length(shapeData$ZIPCODE)
+misdemeanor_perc <- as.integer(rownames(misdemeanor_zip_count)[misdemeanor_zip_count$ZIPCODE == addr_zip]) / nrow(zip_df) * 100
 if (length(misdemeanor_perc) == 0) {
   misdemeanor_perc = 100
 }
-
-# sort violation_zip_count in descending order
-violation_zip_count <- violation_zip_count[order(-violation_zip_count$freq),]
-rownames(violation_zip_count) <- NULL # reset row index
-violation_zip_count
+misdemeanor_perc
 
 # given address is top n% in number of violations reported
-violation_perc <- as.integer(rownames(violation_zip_count)[violation_zip_count$ZIPCODE == addr_zip]) / length(shapeData$ZIPCODE)
+violation_perc <- as.integer(rownames(violation_zip_count)[violation_zip_count$ZIPCODE == addr_zip]) / nrow(zip_df) * 100
 if (length(violation_perc) == 0) {
   violation_perc = 100
 }
+violation_perc
 
-# number of crimes by category in the selected region --> maybe these would be better for the crime map instead of the summary map
-shooting_zip_count[shooting_zip_count$ZIPCODE == addr_zip, "freq"]
-felony_zip_count[felony_zip_count$ZIPCODE == addr_zip, "freq"]
-misdemeanor_zip_count[misdemeanor_zip_count$ZIPCODE == addr_zip, "freq"]
-violation_zip_count[violation_zip_count$ZIPCODE == addr_zip, "freq"]
+# given address is top n% in number of all crimes reported
+all_crimes_perc <- as.integer(rownames(all_crimes_zip_count)[all_crimes_zip_count$ZIPCODE == addr_zip]) / nrow(zip_df) * 100
+if (length(all_crimes_perc) == 0) {
+  all_crimes_perc = 100
+}
+all_crimes_perc
 
-# summary by crime category --> also may be better for the crime map
-summary(felony_zip_count$freq)
-summary(misdemeanor_zip_count$freq)
-summary(violation_zip_count$freq)
-summary(shooting_zip_count$freq)
+# # number of crimes by category in the selected region --> maybe these would be better for the crime map instead of the summary map
+# shooting_zip_count[shooting_zip_count$ZIPCODE == addr_zip, "n"]
+# felony_zip_count[felony_zip_count$ZIPCODE == addr_zip, "n"]
+# misdemeanor_zip_count[misdemeanor_zip_count$ZIPCODE == addr_zip, "n"]
+# violation_zip_count[violation_zip_count$ZIPCODE == addr_zip, "n"]
+
+# # summary by crime category --> also may be better for the crime map
+# summary(felony_zip_count$n)
+# summary(misdemeanor_zip_count$n)
+# summary(violation_zip_count$n)
+# summary(shooting_zip_count$n)
+# summary(all_crimes_zip_count$n)
+
+# par(mfrow=c(3,1))
+
+
+# boxplot for all crimes
+boxplot(all_crimes_zip_count$n,
+        main = "All Crimes",
+        staplewex = 1,
+        xlab = "counts",
+        col = "lavender",
+        border = "darkblue",
+        horizontal = TRUE
+)
+points(x = all_crimes_zip_count[all_crimes_zip_count$ZIPCODE == addr_zip,"n"],y = 1, pch = 19, cex = 1.15,
+       col = "red")
+text(x=all_crimes_zip_count[all_crimes_zip_count$ZIPCODE == addr_zip,"n"], labels = all_crimes_zip_count[all_crimes_zip_count$ZIPCODE == addr_zip,"n"], y = 1.05, cex = 0.7)
+text(x=boxplot.stats(all_crimes_zip_count$n)$stats[seq(1,5,2)], labels = boxplot.stats(all_crimes_zip_count$n)$stats[seq(1,5,2)], y = 1.25, cex = 0.7)
+text(x=boxplot.stats(all_crimes_zip_count$n)$stats[seq(2,5,2)], labels = boxplot.stats(all_crimes_zip_count$n)$stats[seq(2,5,2)], y = 0.75, cex = 0.7)
+
+# boxplot for shooting incidents
+boxplot(shooting_zip_count$n,
+        main = "Shooting Incidents",
+        xlab = "counts",
+        staplewex = 1,
+        xlab = "counts",
+        col = "lavender",
+        border = "darkblue",
+        horizontal = TRUE
+)
+points(x = shooting_zip_count[shooting_zip_count$ZIPCODE == addr_zip,"n"],y = 1, pch = 19, cex = 1.15,
+       col = "red")
+text(x=shooting_zip_count[shooting_zip_count$ZIPCODE == addr_zip,"n"], labels = shooting_zip_count[shooting_zip_count$ZIPCODE == addr_zip,"n"], y = 1.05, cex = 0.7)
+text(x=boxplot.stats(shooting_zip_count$n)$stats[seq(1,5,2)], labels = boxplot.stats(shooting_zip_count$n)$stats[seq(1,5,2)], y = 1.25, cex = 0.7)
+text(x=boxplot.stats(shooting_zip_count$n)$stats[seq(2,5,2)], labels = boxplot.stats(shooting_zip_count$n)$stats[seq(2,5,2)], y = 0.75, cex = 0.7)
+
+# boxplot for felonies
+boxplot(felony_zip_count$n,
+        main = "Felonies",
+        xlab = "counts",
+        staplewex = 1,
+        xlab = "counts",
+        col = "lavender",
+        border = "darkblue",
+        horizontal = TRUE
+)
+points(x = felony_zip_count[felony_zip_count$ZIPCODE == addr_zip,"n"],y = 1, pch = 19, cex = 1.15,
+       col = "red")
+text(x=felony_zip_count[felony_zip_count$ZIPCODE == addr_zip,"n"], labels = felony_zip_count[felony_zip_count$ZIPCODE == addr_zip,"n"], y = 1.05, cex = 0.7)
+text(x=boxplot.stats(felony_zip_count$n)$stats[seq(1,5,2)], labels = boxplot.stats(felony_zip_count$n)$stats[seq(1,5,2)], y = 1.25, cex = 0.7)
+text(x=boxplot.stats(felony_zip_count$n)$stats[seq(2,5,2)], labels = boxplot.stats(felony_zip_count$n)$stats[seq(2,5,2)], y = 0.75, cex = 0.7)
+
+# boxplot for misdemeanors
+boxplot(misdemeanor_zip_count$n,
+        main = "Misdemeanors",
+        staplewex = 1,
+        xlab = "counts",
+        staplewex = 1,
+        xlab = "counts",
+        col = "lavender",
+        border = "darkblue",
+        horizontal = TRUE
+)
+points(x = misdemeanor_zip_count[misdemeanor_zip_count$ZIPCODE == addr_zip,"n"],y = 1, pch = 19, cex = 1.15,
+       col = "red")
+text(x=misdemeanor_zip_count[misdemeanor_zip_count$ZIPCODE == addr_zip,"n"], labels = misdemeanor_zip_count[misdemeanor_zip_count$ZIPCODE == addr_zip,"n"], y = 1.05, cex = 0.7)
+text(x=boxplot.stats(misdemeanor_zip_count$n)$stats[seq(1,5,2)], labels = boxplot.stats(misdemeanor_zip_count$n)$stats[seq(1,5,2)], y = 1.25, cex = 0.7)
+text(x=boxplot.stats(misdemeanor_zip_count$n)$stats[seq(2,5,2)], labels = boxplot.stats(misdemeanor_zip_count$n)$stats[seq(2,5,2)], y = 0.75, cex = 0.7)
+
+# boxplot for violations
+boxplot(violation_zip_count$n,
+        main = "Violations",
+        staplewex = 1,
+        xlab = "counts",
+        staplewex = 1,
+        xlab = "counts",
+        col = "lavender",
+        border = "darkblue",
+        horizontal = TRUE
+)
+points(x = violation_zip_count[violation_zip_count$ZIPCODE == addr_zip,"n"],y = 1, pch = 19, cex = 1.15,
+       col = "red")
+text(x=violation_zip_count[violation_zip_count$ZIPCODE == addr_zip,"n"], labels = violation_zip_count[violation_zip_count$ZIPCODE == addr_zip,"n"], y = 1.05, cex = 0.7)
+text(x=boxplot.stats(violation_zip_count$n)$stats[seq(1,5,2)], labels = boxplot.stats(violation_zip_count$n)$stats[seq(1,5,2)], y = 1.25, cex = 0.7)
+text(x=boxplot.stats(violation_zip_count$n)$stats[seq(2,5,2)], labels = boxplot.stats(violation_zip_count$n)$stats[seq(2,5,2)], y = 0.75, cex = 0.7)
+
+graphics.off()

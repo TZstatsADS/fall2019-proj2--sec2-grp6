@@ -22,6 +22,7 @@ library(dplyr)
 # write.csv(nyc_crime, "nyc_crime.csv", row.names=F)
 
 nyc_crime <- read.csv(file = "nyc_crime.csv", header = TRUE, sep = ",")
+nrow(nyc_crime)
 head(nyc_crime)
 
 # felony <- filter(nyc_crime, LAW_CAT_CD == "FELONY")
