@@ -1,5 +1,4 @@
 library(leaflet)
-library(rgdal)
 library(shiny)
 library(tidyverse)
 library(dplyr)
@@ -11,6 +10,9 @@ library(shinydashboard)
 library(shinycssloaders)
 library(plyr)
 library(readr)
+
+childcare <-childcare <-read_csv(file = 'childcare_AppUsed.csv')
+colnames(childcare) <- make.names(colnames(childcare), unique=TRUE)
 
 dashboardPage(
   dashboardHeader(title = "FiCoH NYC",titleWidth=300),
