@@ -7,7 +7,7 @@ violation <- read.csv(file = "violation.csv", header = TRUE, sep = ",")
 childcare <-read_csv(file = 'childcare_AppUsed.csv')
 colnames(childcare) <- make.names(colnames(childcare), unique=TRUE)
 # childcare <-read.csv(file = 'childcare_AppUsed.csv')
-zipcode <- st_read('ZIP_CODE/ZIP_CODE_040114.shp')
+zipcode <- st_read('ZIP_CODE_040114.shp')
 shapeData <- st_transform(zipcode, CRS('+proj=longlat +datum=WGS84'))
 
 zip_df <- read.csv("zip_df.csv")
