@@ -17,7 +17,7 @@ The **learning goals** for this project is:
 Term: Fall 2019
 
 + Team # 6
-+ **FiCoH NYC**: click **[here](http://35.245.29.87:3838/FiCoHnyc/)** to view the web application
++ **FiCoH NYC**: 
 + **Team Members**
 	+ Young Sim
 	+ Yanyan Liu
