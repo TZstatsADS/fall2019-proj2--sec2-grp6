@@ -42,8 +42,8 @@ Due to the large volume of the data for credibility of the result, the app may t
 
 **Contribution statement**: All team members discussed and agreed on the topic of this project. All team members approve our work presented in this GitHub repository including this contributions statement. 
 
-+ Young Sim cleaned crime data and generated map visualizations for the safety tab and At a Glance tab. She also generated boxplots for safety tab and environment tab as well as tables in At a Glance tab. She improved ui and server for Shiny App based on the baseline Shiny App for At a Glance tab, Safety tab, and Environment tab.
-+ Yanyan Liu cleaned E-designation data, rodent inspection data, and childcare data and generated map visualizations for environment tab and childcare tab. She improved ui and server for Shiny App based on the baseline Shiny App for User Manual tab, Environment tab, and Childcare tab.
++ Young Sim cleaned crime data and generated map visualizations for Safety tab and At a Glance tab. She also cleaned data and generated boxplots for Safety tab and Environment tab as well as tables in At a Glance tab. She improved ui and server for Shiny App based on the baseline Shiny App for User Manual tab, At a Glance tab, Safety tab, and Environment tab.
++ Yanyan Liu cleaned E-designation data, rodent inspection data, and childcare data and generated map visualizations for environment tab and childcare tab. She improved ui and server for Shiny App based on the baseline Shiny App for User Manual tab, Environment tab, and Childcare tab. She also generated web url for the app.
 + Tongyu Wang developed baseline Shiny App and wrote draft for user manual script.
 
 Following [suggestions](http://nicercode.github.io/blog/2013-04-05-projects/) by [RICH FITZJOHN](http://nicercode.github.io/about/#Team) (@richfitz). This folder is orgarnized as follows.
