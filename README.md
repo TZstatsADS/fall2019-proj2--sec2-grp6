@@ -17,7 +17,8 @@ The **learning goals** for this project is:
 Term: Fall 2019
 
 + Team # 6
-+ **FiCoH**: + Team members
++ **[FiCoH](https://project2.shinyapps.io/project_2_group_6/)**:
++ **Team Members**
 	+ Young Sim
 	+ Yanyan Liu
 	+ Tongyu Wang
