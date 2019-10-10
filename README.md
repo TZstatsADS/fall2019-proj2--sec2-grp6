@@ -17,7 +17,7 @@ The **learning goals** for this project is:
 Term: Fall 2019
 
 + Team # 6
-+ **FiCoH NYC**: click **[here](https://project2.shinyapps.io/project_2_group_6/)** to view the web application
++ **FiCoH NYC**: click **[here](http://35.245.29.87:3838/FiCoHnyc/)** to view the web application
 + **Team Members**
 	+ Young Sim
 	+ Yanyan Liu
@@ -43,7 +43,7 @@ Due to the large volume of the data for credibility of the result, the app may t
 
 **Contribution statement**: All team members discussed and agreed on the topic of this project. All team members approve our work presented in this GitHub repository including this contributions statement. 
 
-+ Young Sim cleaned crime data and generated map visualizations for Safety tab and At a Glance tab. She also cleaned data and generated boxplots for Safety tab and Environment tab as well as tables in At a Glance tab. She improved ui and server for Shiny App based on the baseline Shiny App for User Manual tab, At a Glance tab, Safety tab, and Environment tab.
++ Young Sim cleaned crime data and generated map visualizations for Safety tab and At a Glance tab. She also cleaned data and generated boxplots for Safety tab and Environment tab as well as tables in At a Glance tab. She improved ui and server for Shiny App based on the baseline Shiny App for User Manual tab, At a Glance tab, Safety tab, and Environment tab. She also generated web url for the app.
 + Yanyan Liu cleaned E-designation data, rodent inspection data, and childcare data and generated map visualizations for environment tab and childcare tab. She improved ui and server for Shiny App based on the baseline Shiny App for User Manual tab, Environment tab, and Childcare tab. She also generated web url for the app.
 + Tongyu Wang developed baseline Shiny App and wrote draft for user manual script.
 
