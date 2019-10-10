@@ -2,5 +2,9 @@
 
 ### Code lib Folder
 
-The lib directory contains various files with function definitions (but only function definitions - no code that actually runs).
+The lib directory contains codes to generate preprocessed data.
+
+data wangling.Rmd cleans and generates visualizations for environment and childcare.
+
+project 2data cleaning.R and project 2 data cleaning.R clean crime data and generate visualizations for crime and summary tab.
 
