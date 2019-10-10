@@ -36,7 +36,9 @@ Term: Fall 2019
 ![screenshot](figs/childcare.JPG)
 + childcare tab includes information on citywide or nearby childcare centers. User can give conditions for desired centers and get the information for matching centers.
 
-+ **Contribution statement**: All team members discussed and agreed on the topic of this project. All team members approve our work presented in this GitHub repository including this contributions statement. 
+
+
+**Contribution statement**: All team members discussed and agreed on the topic of this project. All team members approve our work presented in this GitHub repository including this contributions statement. 
 
 + Young Sim cleaned crime data and generated map visualizations for the safety tab and At a Glance tab. She also generated boxplots for safety tab and environment tab as well as tables in At a Glance tab. She improved ui and server for Shiny App based on the baseline Shiny App for At a Glance tab, safety tab, and environment tab.
 + Yanyan Liu cleaned E-designation data, rodent inspection data, and childcare data and generated map visualizations for environment tab and childcare tab. She improved ui and server for Shiny App based on the baseline Shiny App for user manual tab, environment tab, and childcare tab.
