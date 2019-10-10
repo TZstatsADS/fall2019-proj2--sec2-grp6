@@ -22,7 +22,7 @@ Term: Fall 2019
 	+ Yanyan Liu
 	+ Tongyu Wang
 
-+ **Project summary**: While there are piles of listings out there to look at when you go house hunting, it is difficult to get to know the living environment of the area until you actually get to live there. People often end up making a contract for a unit just by looking at the interior and realizing that they do not like the area. There are more to consider than just price and commuting distance. FiCoH NYC will help you find a cozy home in New York City by letting you explore different areas in New York to see how the living environments like safety, pollution level, and even information on childcare centers for those of you with childern.
++ **Project summary**: While there are piles of listings out there to look at when you go house hunting, it is difficult to get to know the living environment of the area until you actually get to live there. People often end up making a contract for a unit just by looking at the interior and realizing that they do not like the area. There are more to consider than just price and commuting distance. FiCoH NYC will help you find a cozy home in New York City by letting you explore different areas in New York to see how the living environments like safety, pollution level, and even information on childcare centers are like for those of you with childern.
 
 Due to the large volume of the data for credibility of the result, the app may take a while to load.
 
