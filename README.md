@@ -26,16 +26,16 @@ Term: Fall 2019
 
 Due to the large volume of the data for credibility of the result, the app may take a while to load.
 
-![screenshot](figs/at_a_glance.JPG)
+![screenshot](doc/figs/at_a_glance.JPG)
 + At a Glance tab gives a summary of all three categories for the selected zip area. For crime and environment it shows rank of the region among the whole city in percentage, and for childcare it shows whether childcare center in each category exists in the selected area. More details follow in "Explore More".
 
-![screenshot](figs/safety.JPG)
+![screenshot](doc/figs/safety.JPG)
 + Safety tab gives citywide safety information. User can give an address or an zipcode to find out about the safety level of the selected zip area compared to the rest of the city from boxplots in crime categories.
 
-![screenshot](figs/environment.JPG)
+![screenshot](doc/figs/environment.JPG)
 + Environment tab includes information on pollution and rodent activity. User can give an address or an zipcode to find out about the environmental information of the selected zip area compared to the rest of the city from boxplots in crime categories.
 
-![screenshot](figs/childcare.JPG)
+![screenshot](doc/figs/childcare.JPG)
 + Childcare tab includes information on citywide or nearby childcare centers. User can give conditions for desired centers and get the information for matching centers.
 
 
