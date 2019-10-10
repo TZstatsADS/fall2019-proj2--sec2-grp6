@@ -34,7 +34,7 @@ Term: Fall 2019
 + Environment tab includes information on pollution and rodent activity. User can give an address or an zipcode to find out about the environmental information of the selected zip area compared to the rest of the city from boxplots in crime categories.
 
 ![screenshot](figs/childcare.JPG)
-+ childcare tab includes information on citywide or nearby childcare centers. User can give conditions for desired centers and get the information for matching centers.
++ Childcare tab includes information on citywide or nearby childcare centers. User can give conditions for desired centers and get the information for matching centers.
 
 
 
