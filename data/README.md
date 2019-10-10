@@ -4,7 +4,7 @@
 
 The data directory contains data used in the analysis. This is treated as read only; in paricular the R/python files are never allowed to write to the files in here. Depending on the project, these might be csv files, a database, and the directory itself may have subdirectories.
 
-Due to the large sizes, some data have not been added to this directory. Here are the original sources from [NYC Open Data](https://opendata.cityofnewyork.us/) for the data not included.
+Due to the large sizes, some data have not been added to this directory. Here are the original sources from [NYC Open Data](https://opendata.cityofnewyork.us/) for the data.
 
 
 
@@ -23,3 +23,5 @@ Shooting incidents:
 [Childcare](https://data.cityofnewyork.us/Health/DOHMH-Childcare-Center-Inspections/dsg6-ifza): for childcare centers
 
 [Buildings](https://data.cityofnewyork.us/Housing-Development/Housing-New-York-Units-by-Building/hg8x-zxpr): used to generate longitude and latitude for childcare centers
+
+[Zipcode](https://data.cityofnewyork.us/Business/Zip-Code-Boundaries/i8iw-xf4u)
