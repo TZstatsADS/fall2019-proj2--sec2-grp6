@@ -2,9 +2,7 @@
 
 ### [Project Description](doc/project2_desc.md)
 
-![screenshot](figs/at_a_glance.JPG)
-
-In this second project of GR5243 Applied Data Science, we develop a version 2.0 of an *Exploratory Data Analysis and Visualization* shiny app on a topic of your choice using [NYC Open Data](https://opendata.cityofnewyork.us/) or U.S. government open data released on the [data.gov](https://data.gov/) website. See [Project 2 Description](doc/project2_desc.md) for more details.  
+In project 2, we developed a Shiny App on a topic of exploring living environment in NYC. All data used for the app are originally from [NYC Open Data](https://opendata.cityofnewyork.us/).
 
 The **learning goals** for this project is:
 
@@ -14,8 +12,6 @@ The **learning goals** for this project is:
 - data visualization
 - systems development/design life cycle
 - shiny app/shiny server
-
-*The above general statement about project 2 can be removed once you are finished with your project. It is optional.
 
 ## Project Title FiCoH (Find Cozy Home) NYC
 Term: Fall 2019
@@ -27,6 +23,18 @@ Term: Fall 2019
 	+ Tongyu Wang
 
 + **Project summary**: While there are piles of listings out there to look at when you go house hunting, it is difficult to get to know the living environment of the area until you actually get to live there. People often end up making a contract for a unit just by looking at the interior and realizing that they do not like the area. There are more to consider than just price and commuting distance. FiCoH NYC will help you find a cozy home in New York City by letting you explore different areas in New York to see how the living environments like safety, pollution level, and even information on childcare centers for those of you with childern.
+
+![screenshot](figs/at_a_glance.JPG)
++ At a Glance tab gives a summary of all three categories for the selected zip area. For crime and environment it shows rank of the region among the whole city in percentage, and for childcare it shows whether childcare center in each category exists in the selected area. More details follow in "Explore More".
+
+![screenshot](figs/safety.JPG)
++ Safety tab gives citywide safety information. User can give an address or an zipcode to find out about the safety level of the selected zip area compared to the rest of the city from boxplots in crime categories.
+
+![screenshot](figs/environment.JPG)
++ Environment tab includes information on pollution and rodent activity. User can give an address or an zipcode to find out about the environmental information of the selected zip area compared to the rest of the city from boxplots in crime categories.
+
+![screenshot](figs/childcare.JPG)
++ childcare tab includes information on citywide or nearby childcare centers. User can give conditions for desired centers and get the information for matching centers.
 
 + **Contribution statement**: All team members discussed and agreed on the topic of this project. All team members approve our work presented in this GitHub repository including this contributions statement. 
 
