@@ -577,7 +577,7 @@ server = function(input, output, session) {
     colnames(air)<-c("ZIPCODE","air")
     colnames(noise)<-c("ZIPCODE","noise")
     colnames(rodent_ars_zip)<-c("ZIPCODE","rat")
-    zip_code <- st_read('ZIP_CODE/ZIP_CODE_040114.shp')
+    zip_code <- st_read('ZIP_CODE_040114.shp')
     zip_code <- subset(zip_code, select = c(ZIPCODE,geometry))
     zip_code<-left_join(zip_code,air,by="ZIPCODE")
     zip_code<-left_join(zip_code,noise,by="ZIPCODE")
