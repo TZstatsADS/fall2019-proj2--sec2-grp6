@@ -1,6 +1,4 @@
-# library(readr)
-# library(dplyr)
-# library(plyr)
+# Run childcare manually first before you run app
 
 nyc_shooting <- read.csv(file="nyc_shooting.csv", header=TRUE, sep=",")
 felony <- read.csv(file = "felony.csv", header = TRUE, sep = ",")
