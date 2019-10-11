@@ -17,7 +17,7 @@ The **learning goals** for this project is:
 Term: Fall 2019
 
 + Team # 6
-+ **FiCoH NYC**: 
++ **FiCoH NYC**: click [here](http://35.232.46.88:3838/FiCoH/) for loading web application. If it takes too much time to load or if the app crashes due to large data, we recommend loading it [here](http://35.232.46.88:8787/p/6547/) with username:jiyoungsim, password: columbia. You can also try runnging ui and server files in app folder in your R environment, which will likely give you the fastest result.
 + **Team Members**
 	+ Young Sim
 	+ Yanyan Liu
