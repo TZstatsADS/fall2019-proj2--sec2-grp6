@@ -5,4 +5,4 @@ The App directory contains the app files for the Shiny App (i.e., ui.r and serve
 
 Due to the large volume of the data for credibility of the result, the app may take a while to load.
 
-Data files included in the app are csv files in output folder and the zipcode shapefile in data folder.
+**Data files included in the app are .csv files (some compressed into .zip format) in output folder and the zipcode shapefile in data folder.**
