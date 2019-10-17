@@ -18,6 +18,7 @@ library(sf)
 library(RDSTK)
 library(leaflet.extras)
 
+
 # import crime data by category
 felony <- read.csv(file = "felony.csv", header = TRUE, sep = ",")
 misdemeanor <- read.csv(file = "misdemeanor.csv", header = TRUE, sep = ",")
